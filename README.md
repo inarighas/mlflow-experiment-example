@@ -2,7 +2,65 @@
 
 Example of how to run a simple random forest algorithm on an example dataset ([Boston house price data](http://lib.stat.cmu.edu/datasets/boston)) and a hyperparameter tuning of a random forest algorithm using a cross-validated grid search. We use scikit learn library to perform the machine learnign and statistics part and MLflow for tracking and saving the outcomes.
 
-## 1. Content and Purpose
+## Set up and Installation
+
+### Setting up
+
+Clone repo and create virtual environment (make sure you have virtualenv installed)
+
+```bash
+git clone git@github.com:RESILEYES/mlflow-experiment-example.git &&
+cd mlflow-experiment-example &&
+python3 -m venv .venv &&
+source .venv/bin/activate
+```
+
+### Installing MLflow
+
+Run one of the following commands:
+
+- default MLflow: `pip install mlflow`
+
+- MLflow with the experimental MLflow Pipelines component `pip install mlflow[pipelines]`
+
+- MLflow with extra ML libraries and 3rd-party tools `pip install mlflow[extras]`
+
+- a lightweight version of MLflow `pip install mlflow-skinny`
+
+### Installing dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+In this example, mlflow is already in the `requirements.txt` file.
+
+### Launch MLflow UI
+
+Here is the fast command to launch the UI:
+
+```bash
+mlflow ui
+```
+
+The commandline output should look like this:
+
+```plain
+[2022-10-19 13:48:47 +0200] [4102] [INFO] Starting gunicorn 20.1.0
+[2022-10-19 13:48:47 +0200] [4102] [INFO] Listening at: http://127.0.0.1:5000 (4102)
+[2022-10-19 13:48:47 +0200] [4102] [INFO] Using worker: sync
+[2022-10-19 13:48:47 +0200] [4104] [INFO] Booting worker with pid: 4104
+```
+
+ > **_NOTE:_** For more details, and to be able to configure the mlflow tracking server check the [Tracking UI](#tracking-ui) section.
+
+To access to the web based interface, click or sopy the IP address in your browser. If this is run on a remote machine, an ssh tunnel is needed to access from your local machine. In the general case, the ssh command is the following:
+
+```bash
+ssh -L local_port:remote_address:remote_port username@server.com
+```
+
+## Content and Purpose
 
 This MLflow project contains two entries each one corresponds to an example and they are defined in the `MLproject` file.
 The latter file should be structured as follows:
@@ -29,7 +87,7 @@ In this project, the `MLproject` has 2 targets:
 `train` entry calls the script `train.py` while optimize calls `cv_search.py`. For those two entries, the random seed is fixed (seed=42) and the dataset URL is given as a parameter.
  > **_NOTE:_** Passing the dataset URL or path as an argument to a ML script can be useful to allow dataset versionning in the future, especially when used inside a a ML tracking tool/platform.
 
-## 2. Running this Example
+## Running this Example
 
 You can run any of the two targets defined in `MLProject` file as a standard MLflow run. For these two exaples, we choose to use the local virtual environment instead of conda (which the default virtual environment manager for mlflow) using the `--env-manager=local` argument. We specify also the name of the experiment in the MLFlow command using `--experiment-name` argument.
 
@@ -42,7 +100,7 @@ You can run any of the two targets defined in `MLProject` file as a standard MLf
 >
 > In The following examples, we use the `mlflow.create_experiment()` Python API. Example: `mlflow.create_experiment("my-fantastic-experiment")`
 
-### 2.1 Individual RandomForest example
+### Individual RandomForest example
 
 ```{bash}
 mlflow run -e train --env-manager=local --experiment-name=DemoBoston ./
@@ -85,9 +143,9 @@ Created version '1' of model 'BostonPredict-RF'.
 
 </details>
 
-### 2.2 GridSearch CV example
+### GridSearch CV example
 
-```
+```bash
 mlflow-experiment mlflow run -e optimize --env-manager=local --experiment-name=DemoBoston ./ 
 ```
 
@@ -123,7 +181,7 @@ Created version '1' of model 'BostonDemo-Opt-RF'.
 
 </details>
 
-## 3. Tracking UI
+## Tracking UI
 
 Once the runs executed, the results are saved in the `./mlruns/` directorty and in the `mlruns.db` (SQLite) database.
 
@@ -218,4 +276,3 @@ mlflow server \
 which is more configurable. for more details, see ["MLFlow tracking documentation"](https://www.mlflow.org/docs/latest/tracking.html#how-runs-and-artifacts-are-recorded).
 
 In this case, opening  <http://127.0.0.1:5000> in your favourite browser lets you access the tracking UI.
-
